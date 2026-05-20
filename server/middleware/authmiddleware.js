@@ -1,8 +1,7 @@
 
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const authMiddleware = (req, res, next)=> {
+export const authMiddleware = (req, res, next)=> {
     try {
         
         const authHeader = req.headers.authorization;
@@ -24,15 +23,16 @@ const authMiddleware = (req, res, next)=> {
         const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET
-
         )
 
-        req.admin = decoded;
+        req.user = decoded;
+
+        next();
         
     } catch (error) {
 
         return res.status(401).json({
-            message: "Unauthorized"
+            message: "Expired Token or Invalid!"
         })
         
     }

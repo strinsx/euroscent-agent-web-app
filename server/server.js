@@ -9,6 +9,8 @@ const PORT = process.env.PORT;
 
 connection();
 
-app.listen(PORT || 3001, ()=> {
+
+
+app.listen(PORT || 5000, ()=> {
     console.log(`this is listening from port ${PORT}`)
 });
