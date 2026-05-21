@@ -17,7 +17,9 @@ const orderSchema = new mongoose.Schema({
     ],
 
     totalPrice: Number,
-    buyer: String,
+    name: String,
+    email: String,
+    phone: Number,
 
 })
 
