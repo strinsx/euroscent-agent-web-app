@@ -12,12 +12,12 @@ const orderSchema = new mongoose.Schema({
                 type: mongoose.Schema.ObjectId,
                 ref: "Product"
             },
-            
             quantity: Number
         }
     ],
 
     totalPrice: Number,
+    buyer: String,
 
 })
 

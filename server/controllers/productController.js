@@ -4,7 +4,7 @@ import Product from '../models/productSchema.js'
 
 
 export const getProducts = async(req, res)=> {
-    const products = await Product.find();
+    const products = await Product.findOne({ product });
     res.json(products);
 }
 

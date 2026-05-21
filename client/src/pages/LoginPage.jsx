@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 24 },
@@ -11,6 +12,7 @@ const fadeUp = (delay = 0) => ({
 export default function LoginPage() {
     const [form, setForm] = useState({ username: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) =>
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -38,6 +40,8 @@ export default function LoginPage() {
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", data.user.username);
+
+            navigate('/analytics')
             
         } catch (error) {
             console.error(error)

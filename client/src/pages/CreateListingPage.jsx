@@ -1,13 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import ProtectedRoute from '../constants/protectedrouting'
 
 // ─────────────────────────────────────────────
 // Constants
 // ─────────────────────────────────────────────
 
 const CATEGORIES = ["Floral", "Oriental", "Fresh", "Woody", "Gourmand", "Citrus", "Fougère"];
-const SIZES = ["30ml", "50ml", "75ml", "100ml", "125ml", "150ml", "200ml"];
+const SIZES = ['60ml', '125ml'];
 const GENDERS = ["Unisex", "Masculine", "Feminine"];
 
 const fadeUp = (delay = 0) => ({
@@ -19,10 +20,6 @@ const fadeUp = (delay = 0) => ({
 // ─────────────────────────────────────────────
 // Sub-components
 // ─────────────────────────────────────────────
-
-
-
-
 
 function FieldLabel({ children }) {
     return (
@@ -69,8 +66,8 @@ function PillSelect({ options, selected, onToggle }) {
                         type="button"
                         onClick={() => onToggle(opt)}
                         className={`px-4 py-1.5 text-[10px] tracking-[0.2em] uppercase border transition-all duration-200 ${active
-                            ? "bg-[#1f1f1f] text-white border-[#1f1f1f]"
-                            : "text-[#1f1f1f]/45 border-[#1f1f1f]/12 hover:border-[#1f1f1f]/35"
+                                ? "bg-[#1f1f1f] text-white border-[#1f1f1f]"
+                                : "text-[#1f1f1f]/45 border-[#1f1f1f]/12 hover:border-[#1f1f1f]/35"
                             }`}
                         style={{ fontFamily: "Manrope, sans-serif", fontWeight: 500 }}
                     >
@@ -106,8 +103,8 @@ function ImageDropZone({ images, onAdd, onRemove }) {
                 }}
                 onClick={() => inputRef.current?.click()}
                 className={`relative border border-dashed cursor-pointer transition-colors duration-200 flex flex-col items-center justify-center py-10 gap-3 ${dragging
-                    ? "border-[#1f1f1f]/50 bg-[#1f1f1f]/[0.02]"
-                    : "border-[#1f1f1f]/15 hover:border-[#1f1f1f]/30"
+                        ? "border-[#1f1f1f]/50 bg-[#1f1f1f]/[0.02]"
+                        : "border-[#1f1f1f]/15 hover:border-[#1f1f1f]/30"
                     }`}
             >
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" strokeWidth="1" opacity="0.25">
@@ -205,24 +202,17 @@ function Section({ title, number, delay = 0, children }) {
 
 const EMPTY_FORM = {
     name: "",
-    house: "",
     description: "",
     price: "",
-    comparePrice: "",
     stock: "",
-    sku: "",
     gender: "Unisex",
-    year: "",
-    country: "",
-    topNotes: "",
-    heartNotes: "",
-    baseNotes: "",
     category: [],
     sizes: [],
-    tags: "",
 };
 
 export default function CreateListingPage() {
+    const user = localStorage.getItem("user") || "null";
+    const logout = () => { localStorage.removeItem("user"); window.location.href = "/"; localStorage.removeItem("token") };
     const navigate = useNavigate();
 
     const [form, setForm] = useState(EMPTY_FORM);
@@ -230,19 +220,7 @@ export default function CreateListingPage() {
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    useEffect(() => {
-
-        const token = localStorage.getItem("token");
-        if (!token) {
-
-            alert('session expired')
-            navigate('/')
-
-        }
-
-    }, [])
-
-
+    ProtectedRoute();
 
     const set = (field) => (e) =>
         setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -269,6 +247,43 @@ export default function CreateListingPage() {
         //   headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         //   body: JSON.stringify({ ...form, images: images.map(i => i.file) }),
         // });
+
+        const token = localStorage.getItem("token")
+
+
+        const formData = new FormData();
+
+        // text fields
+        formData.append("title", form.name);
+        formData.append("price", form.price);
+        formData.append("desc", form.description);
+        formData.append("stock", form.stock);
+        formData.append("gender", form.gender);
+
+        // arrays
+        form.category.forEach((cat) => {
+            formData.append("category", cat);
+        });
+
+        form.sizes.forEach((size) => {
+            formData.append("sizes", size);
+        });
+
+        // images
+        images.forEach((img) => {
+            formData.append("images", img.file);
+        });
+
+        const res = await fetch("http://localhost:3000/api/create-listing", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+        });
+
+        const data = await res.json();
+
 
         await new Promise((r) => setTimeout(r, 1400)); // simulate network
         setSubmitting(false);
@@ -335,7 +350,54 @@ export default function CreateListingPage() {
             className="min-h-screen bg-white text-[#1f1f1f]"
             style={{ fontFamily: "Manrope, sans-serif" }}
         >
+            {/* ── Top bar ── */}
+            <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#1f1f1f]/[0.06]">
+                <div className="flex items-center justify-between px-6 md:px-12 h-14">
+                    <div className="flex items-center gap-6">
+                        <Link
+                            to="/"
+                            className="text-[10px] tracking-[0.3em] uppercase text-[#1f1f1f]/35 hover:text-[#1f1f1f]/70 transition-colors flex items-center gap-2"
+                            style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                <path d="M19 12H5M5 12l7-7M5 12l7 7" />
+                            </svg>
+                            Back
+                        </Link>
+                        <div className="w-px h-4 bg-[#1f1f1f]/10" />
+                        <span
+                            className="text-[11px] tracking-[0.25em] uppercase text-[#1f1f1f]/50"
+                            style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
+                        >
+                            Create Listing
+                        </span>
+                    </div>
 
+                    <div className="flex items-center gap-5">
+                        {/* Logged-in user badge */}
+                        <div className="hidden sm:flex items-center gap-2">
+                            <div className="w-6 h-6 bg-[#1f1f1f] flex items-center justify-center">
+                                <span className="text-white text-[9px] font-bold">
+                                    {(user || "U")[0].toUpperCase()}
+                                </span>
+                            </div>
+                            <span
+                                className="text-[10px] tracking-[0.15em] text-[#1f1f1f]/40"
+                                style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
+                            >
+                                {user || "Admin"}
+                            </span>
+                        </div>
+                        <button
+                            onClick={() => { logout(); navigate("/login"); }}
+                            className="text-[10px] tracking-[0.2em] uppercase text-[#1f1f1f]/30 hover:text-[#1f1f1f]/70 transition-colors"
+                            style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
+                        >
+                            Sign out
+                        </button>
+                    </div>
+                </div>
+            </header>
 
             {/* ── Page body ── */}
             <div className="max-w-4xl mx-auto px-6 md:px-12 py-14">
@@ -375,34 +437,7 @@ export default function CreateListingPage() {
                                     required
                                 />
                             </div>
-                            <div>
-                                <FieldLabel>Perfume House / Brand *</FieldLabel>
-                                <TextInput
-                                    value={form.house}
-                                    onChange={set("house")}
-                                    placeholder="e.g. Maison Éclat"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <FieldLabel>Country of Origin</FieldLabel>
-                                <TextInput
-                                    value={form.country}
-                                    onChange={set("country")}
-                                    placeholder="e.g. France"
-                                />
-                            </div>
-                            <div>
-                                <FieldLabel>Year Released</FieldLabel>
-                                <TextInput
-                                    type="number"
-                                    value={form.year}
-                                    onChange={set("year")}
-                                    placeholder="e.g. 2021"
-                                    min="1900"
-                                    max={new Date().getFullYear()}
-                                />
-                            </div>
+
                             <div className="md:col-span-2">
                                 <FieldLabel>Description *</FieldLabel>
                                 <textarea
@@ -430,8 +465,8 @@ export default function CreateListingPage() {
                                             type="button"
                                             onClick={() => setForm((p) => ({ ...p, gender: g }))}
                                             className={`px-5 py-1.5 text-[10px] tracking-[0.2em] uppercase border transition-all duration-200 ${form.gender === g
-                                                ? "bg-[#1f1f1f] text-white border-[#1f1f1f]"
-                                                : "text-[#1f1f1f]/45 border-[#1f1f1f]/12 hover:border-[#1f1f1f]/35"
+                                                    ? "bg-[#1f1f1f] text-white border-[#1f1f1f]"
+                                                    : "text-[#1f1f1f]/45 border-[#1f1f1f]/12 hover:border-[#1f1f1f]/35"
                                                 }`}
                                             style={{ fontFamily: "Manrope, sans-serif", fontWeight: 500 }}
                                         >
@@ -459,35 +494,7 @@ export default function CreateListingPage() {
                         </div>
                     </Section>
 
-                    {/* ── 04 · Scent Profile ── */}
-                    <Section title="Scent Profile" number="04" delay={0.2}>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-7">
-                            <div>
-                                <FieldLabel>Top Notes</FieldLabel>
-                                <TextInput
-                                    value={form.topNotes}
-                                    onChange={set("topNotes")}
-                                    placeholder="Bergamot, Lemon..."
-                                />
-                            </div>
-                            <div>
-                                <FieldLabel>Heart Notes</FieldLabel>
-                                <TextInput
-                                    value={form.heartNotes}
-                                    onChange={set("heartNotes")}
-                                    placeholder="Rose, Iris..."
-                                />
-                            </div>
-                            <div>
-                                <FieldLabel>Base Notes</FieldLabel>
-                                <TextInput
-                                    value={form.baseNotes}
-                                    onChange={set("baseNotes")}
-                                    placeholder="Oud, Sandalwood..."
-                                />
-                            </div>
-                        </div>
-                    </Section>
+
 
                     {/* ── 05 · Pricing & Inventory ── */}
                     <Section title="Pricing & Inventory" number="05" delay={0.25}>
