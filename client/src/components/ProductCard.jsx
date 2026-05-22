@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const heights = {
-  tall: "h-96 md:h-[480px]",
-  wide: "h-64 md:h-72",
-  square: "h-72",
-};
+import { useNavigate } from "react-router-dom";
+import { useCart } from "./CartContext";
 
 export default function ProductCard({ item, index }) {
   const [hovered, setHovered] = useState(false);
+  const navigate = useNavigate();
+  const { addItem } = useCart();
+
+  const imageUrl =
+    item.images && item.images.length > 0
+      ? item.images[0]
+      : "https://placehold.co/300x400?text=No+Image";
 
   return (
     <motion.div
@@ -19,73 +22,39 @@ export default function ProductCard({ item, index }) {
       className="group cursor-pointer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => navigate(`/product/${item._id}`)}
     >
-      {/* ── Image / illustration area ── */}
-      <div className={`relative overflow-hidden bg-[#f5f3f0] ${heights[item.aspect]}`}>
-        {/* Abstract SVG bottle */}
-        <svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 300 400"
-          preserveAspectRatio="xMidYMid meet"
-          aria-hidden="true"
-        >
-          <defs>
-            <radialGradient id={`grd-${item.id}`} cx="50%" cy="40%" r="55%">
-              <stop offset="0%" stopColor="#e8e0d4" />
-              <stop offset="100%" stopColor="#d4c9b8" />
-            </radialGradient>
-          </defs>
+      {/* Image */}
+      <div className="relative overflow-hidden bg-[#f5f3f0] h-72">
+        <img
+          src={imageUrl}
+          alt={item.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
 
-          {/* Bottle body */}
-          <motion.rect
-            x="110" y="140" width="80" height="130" rx="12"
-            fill={`url(#grd-${item.id})`}
-            stroke="#b8a898" strokeWidth="1"
-            animate={hovered ? { scaleY: 1.03, y: 134 } : { scaleY: 1, y: 140 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            style={{ transformOrigin: "150px 270px" }}
-          />
-          {/* Bottle neck */}
-          <motion.rect
-            x="130" y="110" width="40" height="35" rx="4"
-            fill="#cfc3b2" stroke="#b8a898" strokeWidth="0.8"
-            animate={hovered ? { y: 104 } : { y: 110 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          />
-          {/* Cap */}
-          <motion.rect
-            x="123" y="90" width="54" height="24" rx="6"
-            fill="#1f1f1f"
-            animate={hovered ? { y: 80 } : { y: 90 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          />
-          {/* Label line */}
-          <motion.rect
-            x="122" y="188" width="56" height="0.8"
-            fill="#a09080" opacity="0.6"
-            animate={hovered ? { y: 182 } : { y: 188 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          />
-          {/* Decorative dot */}
-          <motion.circle
-            cx="150" cy="214" r="3"
-            fill="#a09080" opacity="0.5"
-            animate={hovered ? { cy: 208 } : { cy: 214 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </svg>
-
-        {/* Badge tag */}
-        {item.tag && (
+        {/* Low stock badge */}
+        {item.stock <= 5 && item.stock > 0 && (
           <span
-            className="absolute top-4 left-4 text-[10px] tracking-[0.2em] uppercase px-3 py-1 bg-[#1f1f1f] text-white"
+            className="absolute top-3 right-3 text-[9px] tracking-[0.15em] uppercase px-2.5 py-1 border border-red-300 text-red-400"
             style={{ fontFamily: "Manrope, sans-serif", fontWeight: 500 }}
           >
-            {item.tag}
+            Low Stock
           </span>
         )}
 
-        {/* Quick-add overlay on hover */}
+        {/* Out of stock overlay */}
+        {item.stock === 0 && (
+          <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+            <span
+              className="text-[10px] tracking-[0.3em] uppercase text-[#1f1f1f]/50"
+              style={{ fontFamily: "Manrope, sans-serif", fontWeight: 600 }}
+            >
+              Out of Stock
+            </span>
+          </div>
+        )}
+
+        {/* Add to cart hover button */}
         <AnimatePresence>
           {hovered && (
             <motion.div
@@ -93,10 +62,15 @@ export default function ProductCard({ item, index }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.25 }}
-              className="absolute bottom-4 inset-x-4"
+              className="absolute bottom-3 inset-x-3"
             >
               <button
-                className="w-full py-3 bg-[#1f1f1f] text-white text-xs tracking-[0.2em] uppercase"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addItem(item, item.size, 1);
+                }}
+                disabled={item.stock === 0}
+                className="w-full py-2.5 bg-[#1f1f1f] text-white text-[10px] tracking-[0.2em] uppercase disabled:opacity-40"
                 style={{ fontFamily: "Manrope, sans-serif", fontWeight: 600 }}
               >
                 Add to Cart
@@ -106,33 +80,54 @@ export default function ProductCard({ item, index }) {
         </AnimatePresence>
       </div>
 
-      {/* ── Product info ── */}
+      {/* Info */}
       <div className="pt-4 pb-2">
-        <p
-          className="text-[10px] tracking-[0.25em] uppercase text-[#1f1f1f]/40 mb-1"
-          style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
-        >
-          {item.house}
-        </p>
-        <div className="flex items-baseline justify-between">
-          <h3
-            className="text-base text-[#1f1f1f]"
-            style={{ fontFamily: "Manrope, sans-serif", fontWeight: 600 }}
-          >
-            {item.name}
-          </h3>
-          <span
-            className="text-sm text-[#1f1f1f]"
+        {item.house && (
+          <p
+            className="text-[10px] tracking-[0.25em] uppercase text-[#1f1f1f]/40 mb-1"
             style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
           >
-            {item.price}
+            {item.house}
+          </p>
+        )}
+
+        <div className="flex items-baseline justify-between gap-2">
+          <h3
+            className="text-sm text-[#1f1f1f] leading-snug"
+            style={{ fontFamily: "Manrope, sans-serif", fontWeight: 600 }}
+          >
+            {item.title}
+          </h3>
+          <span
+            className="text-sm text-[#1f1f1f] shrink-0"
+            style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
+          >
+            ₱{item.price?.toLocaleString()}
           </span>
         </div>
+
+        {item.desc && (
+          <p
+            className="text-[10px] text-[#1f1f1f]/45 mt-1 leading-relaxed line-clamp-2"
+            style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
+          >
+            {item.desc}
+          </p>
+        )}
+
         <p
-          className="text-xs text-[#1f1f1f]/50 mt-1"
-          style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300, fontStyle: "italic" }}
+          className="text-[9px] tracking-[0.1em] uppercase mt-1.5"
+          style={{
+            fontFamily: "Roboto, sans-serif",
+            fontWeight: 300,
+            color: item.stock <= 5 ? "#f87171" : "#1f1f1f50",
+          }}
         >
-          {item.note}
+          {item.stock === 0
+            ? "Out of stock"
+            : item.stock <= 5
+            ? `Only ${item.stock} left`
+            : `${item.stock} in stock`}
         </p>
       </div>
     </motion.div>

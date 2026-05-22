@@ -1,10 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
-import { FEATURED, CATEGORIES } from "../constants/data.js";
+import { CATEGORIES } from "../constants/data.js";
 
 export default function FeaturedProducts() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:3000/api/products", {
+          headers: {
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        });
+        const data = await res.json();
+        setProducts(data.products || []);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const filtered = useMemo(() => {
+    const list = activeCategory === "All"
+      ? products
+      : products.filter((p) => p.category === activeCategory);
+
+    return list.slice(0, 8); // cap at 8 for the homepage grid
+  }, [products, activeCategory]);
 
   return (
     <section className="px-6 md:px-12 py-24">
@@ -30,10 +58,7 @@ export default function FeaturedProducts() {
           >
             Featured
             <br />
-            <span
-              className="text-[#1f1f1f]/20 italic"
-              style={{ fontWeight: 700 }}
-            >
+            <span className="text-[#1f1f1f]/20 italic" style={{ fontWeight: 700 }}>
               Fragrances
             </span>
           </motion.h2>
@@ -58,10 +83,28 @@ export default function FeaturedProducts() {
         </div>
       </div>
 
-      {/* ── Bento grid ── */}
+      {/* ── Grid ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        {FEATURED.map((item, i) => (
-          <ProductCard key={item.id} item={item} index={i} />
+        {products.length === 0 && (
+          <p
+            className="col-span-4 text-center text-sm text-[#1f1f1f]/30 py-16"
+            style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
+          >
+            Loading fragrances...
+          </p>
+        )}
+
+        {products.length > 0 && filtered.length === 0 && (
+          <p
+            className="col-span-4 text-center text-sm text-[#1f1f1f]/30 py-16"
+            style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}
+          >
+            No fragrances in this category.
+          </p>
+        )}
+
+        {filtered.map((product, i) => (
+          <ProductCard key={product._id} item={product} index={i} />
         ))}
       </div>
 
