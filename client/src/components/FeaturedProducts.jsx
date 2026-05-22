@@ -112,7 +112,7 @@ export default function FeaturedProducts() {
       {/* ── View all CTA ── */}
       <div className="text-center mt-16">
         <Link
-          href="/collections"
+          to="/collections"
           className="inline-block px-10 py-4 border border-[#1f1f1f]/20 text-xs tracking-[0.3em] uppercase text-[#1f1f1f]/60 hover:border-[#1f1f1f] hover:text-[#1f1f1f] transition-all duration-300"
           style={{ fontFamily: "Manrope, sans-serif", fontWeight: 600 }}
         >
