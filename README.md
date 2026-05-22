@@ -198,8 +198,4 @@ This project became one of my biggest learning experiences in backend developmen
 
 ---
 
-# 👨‍💻 Author
-
-Developed by **Albert Miguel Rafales** && **Rhenzel James Lacao**
-
 ```
