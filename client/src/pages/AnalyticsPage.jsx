@@ -85,7 +85,7 @@ export default function AnalyticsPage() {
 
   const totalRevenue = useMemo(() =>
     orders.reduce((sum, order) => sum + order.totalPrice, 0),
-  [orders]);
+    [orders]);
 
   const avgOrderValue = useMemo(() => {
     if (orders.length === 0) return 0;
@@ -131,12 +131,11 @@ export default function AnalyticsPage() {
 
   const lowStockProducts = useMemo(() =>
     products.filter((p) => p.stock <= 10),
-  [products]);
+    [products]);
 
   const recentOrders = useMemo(() =>
-    [...orders].reverse().slice(0, 6),
-  [orders]);
-
+    [...orders].reverse(),
+    [orders]);
   const stats = [
     {
       label: "Total Revenue",
@@ -328,15 +327,16 @@ export default function AnalyticsPage() {
 
         {/* RECENT ORDERS */}
         <motion.div {...fadeUp(0.4)} className="border border-[#1f1f1f]/[0.08] mb-16">
-          <div className="px-6 py-4 border-b border-[#1f1f1f]/[0.06]">
+          <div className="px-6 py-4 border-b border-[#1f1f1f]/[0.06] flex items-center justify-between">
             <p className="text-[9px] tracking-[0.28em] uppercase text-[#1f1f1f]/35">
-              Recent Orders
+              All Orders
             </p>
+            <span className="text-[9px] text-[#1f1f1f]/25">{orders.length} total</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
+              <thead className="sticky top-0 bg-white z-10">
                 <tr className="border-b border-[#1f1f1f]/[0.04]">
                   {["Customer", "Total"].map((h) => (
                     <th
@@ -348,30 +348,36 @@ export default function AnalyticsPage() {
                   ))}
                 </tr>
               </thead>
-              <tbody>
-                {recentOrders.map((order, i) => (
-                  <motion.tr
-                    key={order._id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.45 + i * 0.05 }}
-                    className="border-b border-[#1f1f1f]/[0.04] hover:bg-[#1f1f1f]/[0.02] transition-colors"
-                  >
-                    <td className="px-6 py-4 text-xs">
-                      <button
-                        onClick={() => setSelectedOrder(order)}
-                        className="hover:underline underline-offset-2 text-left"
-                      >
-                        {order.name}
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 text-xs font-semibold">
-                      ₱{order.totalPrice?.toLocaleString()}
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
             </table>
+
+            {/* Scrollable body */}
+            <div className="overflow-y-auto max-h-[400px]">
+              <table className="w-full">
+                <tbody>
+                  {recentOrders.map((order, i) => (
+                    <motion.tr
+                      key={order._id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.45 + Math.min(i, 10) * 0.05 }}
+                      className="border-b border-[#1f1f1f]/[0.04] hover:bg-[#1f1f1f]/[0.02] transition-colors"
+                    >
+                      <td className="px-6 py-4 text-xs">
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="hover:underline underline-offset-2 text-left"
+                        >
+                          {order.name}
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 text-xs font-semibold">
+                        ₱{order.totalPrice?.toLocaleString()}
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -417,8 +423,8 @@ export default function AnalyticsPage() {
               {/* Contact details */}
               <div className="space-y-1 mb-6">
                 {[
-                  { label: "Email",   value: selectedOrder.email },
-                  { label: "Phone",   value: selectedOrder.phone },
+                  { label: "Email", value: selectedOrder.email },
+                  { label: "Phone", value: selectedOrder.phone },
                   { label: "Address", value: selectedOrder.address },
                   { label: "Payment", value: selectedOrder.paymentMethod?.toUpperCase() },
                 ].map(({ label, value }) => (
@@ -435,27 +441,7 @@ export default function AnalyticsPage() {
               </div>
 
               {/* Items ordered */}
-              {selectedOrder.products?.length > 0 && (
-                <div className="mb-6">
-                  <p className="text-[9px] tracking-[0.25em] uppercase text-[#1f1f1f]/35 mb-3">
-                    Items Ordered
-                  </p>
-                  <div className="space-y-2">
-                    {selectedOrder.products.map((item, i) => (
-                      <div
-                        key={i}
-                        className="flex justify-between text-xs py-2 border-b border-[#1f1f1f]/[0.04]"
-                      >
-                        <span className="text-[#1f1f1f]/70">
-                          {item.productName || item.productId?.name || "Product"}
-                        </span>
-                        <span className="text-[#1f1f1f]/50">× {item.quantity}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
+              
               {/* Total */}
               <div className="flex justify-between items-baseline pt-2">
                 <span className="text-[9px] tracking-[0.25em] uppercase text-[#1f1f1f]/35">
