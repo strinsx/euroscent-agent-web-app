@@ -1,5 +1,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { Link } from "react-router-dom";
+
 
 export default function Hero() {
   const heroRef = useRef(null);
@@ -84,20 +86,20 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.85 }}
         >
-          <a
-            href="/collections"
+          <Link
+            to="/collections"
             className="px-8 py-3.5 bg-[#1f1f1f] text-white text-xs tracking-[0.25em] uppercase hover:bg-[#1f1f1f]/80 transition-colors"
             style={{ fontFamily: "Manrope, sans-serif", fontWeight: 600 }}
           >
             Shop Now
-          </a>
-          <a
-            href="/about"
+          </Link>
+          <Link
+            to="/about"
             className="px-8 py-3.5 border border-[#1f1f1f]/20 text-[#1f1f1f] text-xs tracking-[0.25em] uppercase hover:border-[#1f1f1f]/50 transition-colors"
             style={{ fontFamily: "Manrope, sans-serif", fontWeight: 500 }}
           >
             Our Story
-          </a>
+          </Link>
         </motion.div>
       </motion.div>
 
