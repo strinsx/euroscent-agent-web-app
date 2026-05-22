@@ -16,7 +16,7 @@ const TEAM = [
 ];
 
 const MILESTONES = [
-  { year: "2018", event: "Founded in Makati, Philippines — first niche fragrance boutique in the country." },
+  { year: "2018", event: "Branch founded in Pasig, Philippines" },
   { year: "2019", event: "Established direct partnerships with 12 European perfume houses." },
   { year: "2021", event: "Launched online store, shipping nationwide across the Philippines." },
   { year: "2023", event: "Expanded catalog to over 200 unique fragrances from 40+ houses." },
