@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     images: [{ type: String }],
     stock: { type: Number, default: 1 },
-    size: { type: Number, default: 30 },
+    size: { type: Number, default: 60 },
     category: { type: String, default: "Oriental" },
     gender: { type: String, default: "Unisex" },
 }, { timestamps: true });
