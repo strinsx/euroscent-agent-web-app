@@ -11,6 +11,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import AboutPage from "./pages/AboutPage";
 import CreateListingPage from "./pages/CreateListingPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import DeleteListingPage from "./pages/DeleteListingPage";
 
 
 export default function App() {
@@ -48,6 +49,7 @@ export default function App() {
           {/* Alias routes for user-facing nav links */}
           <Route path="/stores" element={<Navigate to="/collections" replace />} />
           <Route path="/journal" element={<Navigate to="/about" replace />} />
+          <Route path="/delete-listing" element={<DeleteListingPage />} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -195,30 +195,30 @@ export default function AnalyticsPage() {
     }, [orders]);
 
   // TOP PRODUCTS
-const topProducts = useMemo(() => {
-  const counter = {};
+  const topProducts = useMemo(() => {
+    const counter = {};
 
-  orders.forEach((order) => {
-    order.products?.forEach((item) => {   // was order.product
-      const id = item.productId?._id      // populated object
-        ?? item.productId;                // raw ObjectId string
+    orders.forEach((order) => {
+      order.products?.forEach((item) => {   // was order.product
+        const id = item.productId?._id      // populated object
+          ?? item.productId;                // raw ObjectId string
 
-      if (!counter[id]) counter[id] = { sold: 0, name: item.productName };
-      counter[id].sold += item.quantity;
+        if (!counter[id]) counter[id] = { sold: 0, name: item.productName };
+        counter[id].sold += item.quantity;
+      });
     });
-  });
 
-  return products
-    .map((product) => {
-      const id = product._id || product.id;
-      return {
-        ...product,
-        sold: counter[id]?.sold || 0,
-      };
-    })
-    .sort((a, b) => b.sold - a.sold)
-    .slice(0, 5);
-}, [orders, products]);
+    return products
+      .map((product) => {
+        const id = product._id || product.id;
+        return {
+          ...product,
+          sold: counter[id]?.sold || 0,
+        };
+      })
+      .sort((a, b) => b.sold - a.sold)
+      .slice(0, 5);
+  }, [orders, products]);
 
   // LOW STOCK
   const lowStockProducts =
@@ -318,6 +318,13 @@ const topProducts = useMemo(() => {
             className="flex items-center gap-2 px-4 py-1.5 border border-white/20 text-[10px] tracking-[0.2em] uppercase text-white/70 hover:border-white/50 hover:text-white transition-colors"
           >
             Create Listing
+          </Link>
+
+          <Link
+            to="/delete-listing"
+            className="flex items-center gap-2 px-4 py-1.5 border border-red-400/30 text-[10px] tracking-[0.2em] uppercase text-red-400/70 hover:border-red-400/60 hover:text-red-400 transition-colors"
+          >
+            Delete Listing
           </Link>
 
           <div className="flex items-center gap-2">
@@ -585,7 +592,7 @@ const topProducts = useMemo(() => {
                         {order.totalPrice?.toLocaleString()}
                       </td>
 
-                     
+
                     </motion.tr>
                   )
                 )}
