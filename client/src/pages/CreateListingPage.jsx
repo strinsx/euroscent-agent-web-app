@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import ProtectedRoute from '../constants/protectedrouting'
 
 // ─────────────────────────────────────────────
 // Constants
@@ -212,15 +211,18 @@ const EMPTY_FORM = {
 
 export default function CreateListingPage() {
     const user = localStorage.getItem("user") || "null";
-    const logout = () => { localStorage.removeItem("user"); window.location.href = "/"; localStorage.removeItem("token") };
     const navigate = useNavigate();
+    const logout = () => {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        navigate("/");
+    };
 
     const [form, setForm] = useState(EMPTY_FORM);
     const [images, setImages] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    ProtectedRoute();
 
     const set = (field) => (e) =>
         setForm((prev) => ({ ...prev, [field]: e.target.value }));

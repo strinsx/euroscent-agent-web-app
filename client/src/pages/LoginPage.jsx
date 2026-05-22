@@ -34,15 +34,23 @@ export default function LoginPage() {
                 })
             })
 
-            const data = await res.json()
+            const data = await res.json();
 
-            alert(data.message);
+            if (!res.ok) {
+                alert(data.message || "Login failed");
+                return;
+            }
+
+            if (!data.token || !data.user) {
+                alert(data.message || "Login failed");
+                return;
+            }
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", data.user.username);
 
-            navigate('/analytics')
-            
+            alert(data.message || "Login successful");
+            navigate('/analytics');
         } catch (error) {
             console.error(error)
         }

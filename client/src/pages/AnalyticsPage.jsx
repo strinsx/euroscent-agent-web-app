@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-
-import ProtectedRoute from "../constants/protectedrouting";
+import { Link, useNavigate } from "react-router-dom";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -63,7 +61,7 @@ function SparkBar({
 }
 
 export default function AnalyticsPage() {
-  ProtectedRoute();
+  const navigate = useNavigate();
 
   const user =
     localStorage.getItem("user") ||
@@ -73,7 +71,7 @@ export default function AnalyticsPage() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
 
-    window.location.href = "/";
+    navigate("/");
   };
 
   const [products, setProducts] =
@@ -115,8 +113,9 @@ export default function AnalyticsPage() {
             "user"
           );
 
-          window.location.href =
-            "/login";
+          navigate(
+            "/login"
+          );
 
           return;
         }
