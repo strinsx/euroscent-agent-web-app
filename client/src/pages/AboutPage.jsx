@@ -92,27 +92,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team */}
-      <section className="px-6 md:px-12 py-16 border-t border-[#1f1f1f]/[0.06]">
-        <motion.h2 className="text-3xl font-bold tracking-tight mb-14" {...fadeUp(0)}>
-          The <span className="text-[#1f1f1f]/20 italic">Team</span>
-        </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {TEAM.map((member, i) => (
-            <motion.div key={i} {...fadeUp(i * 0.1)}>
-              <div className="w-full aspect-square bg-[#f5f3f0] mb-5 flex items-end p-5">
-                <div className="w-10 h-10 bg-[#1f1f1f] flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">{member.name[0]}</span>
-                </div>
-              </div>
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#1f1f1f]/30 mb-1" style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}>{member.role}</p>
-              <h3 className="text-base font-bold mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>{member.name}</h3>
-              <p className="text-xs text-[#1f1f1f]/45 leading-relaxed" style={{ fontFamily: "Roboto, sans-serif", fontWeight: 300 }}>{member.bio}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       <Footer />
     </div>
   );
