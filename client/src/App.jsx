@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "./components/CartContext";
+import ProtectedRoute from "./ProtectedRoute";
 
 import HomePage from "./HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -15,7 +16,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 export default function App() {
   return (
     <CartProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           {/* Public */}
           <Route path="/" element={<HomePage />} />
@@ -26,14 +27,32 @@ export default function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/about" element={<AboutPage />} />
 
-          {/* Admin — token check handled inside each page */}
-          <Route path="/create-listing" element={<CreateListingPage />} />
-          <Route path="/analytics" element={<AnalyticsPage />} />
+          {/* Admin — protected by auth guard */}
+          <Route
+            path="/create-listing"
+            element={
+              <ProtectedRoute>
+                <CreateListingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <AnalyticsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Alias routes for user-facing nav links */}
+          <Route path="/stores" element={<Navigate to="/collections" replace />} />
+          <Route path="/journal" element={<Navigate to="/about" replace />} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </CartProvider>
   );
 }

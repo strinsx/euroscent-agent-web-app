@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signUpToken } from "../constants/token";
 
 const fadeUp = (delay = 0) => ({
@@ -10,6 +10,7 @@ const fadeUp = (delay = 0) => ({
 });
 
 export default function SignUpPage() {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         username: "",
         password: "",
@@ -76,6 +77,8 @@ export default function SignUpPage() {
             confirm: "",
             token: "",
         });
+
+        navigate('/login');
 
     } catch (error) {
 

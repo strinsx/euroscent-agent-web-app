@@ -5,6 +5,13 @@ import { Link } from "react-router-dom";
 import { NAV_LINKS } from "../constants/data";
 import { useCart } from "./CartContext";
 
+const ROUTE_MAP = {
+  Collections: "/collections",
+  About: "/about",
+  Stores: "/collections",
+  Journal: "/about",
+};
+
 export default function GuestNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -81,7 +88,7 @@ export default function GuestNavbar() {
                 }}
               >
                 <Link
-                  to={`/${link.toLowerCase()}`}
+                  to={ROUTE_MAP[link] || "/"}
                   className="text-xs tracking-[0.2em] uppercase text-[#1f1f1f]/60 hover:text-[#1f1f1f] transition-colors duration-200"
                   style={{
                     fontFamily:
