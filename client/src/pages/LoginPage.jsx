@@ -23,7 +23,7 @@ export default function LoginPage() {
 
         try {
 
-            const res = await fetch('http://localhost:3000/api/auth/login', {
+            const res = await fetch('https://euroscent-agent-web-app-server.onrender.com/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

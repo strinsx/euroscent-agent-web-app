@@ -98,8 +98,8 @@ export default function AnalyticsPage() {
         };
 
         const [productsRes, ordersRes] = await Promise.all([
-          fetch("http://localhost:3000/api/products", { headers }), // ← your products route
-          fetch("http://localhost:3000/api/get-all-orders", { headers }), // ← correct route
+          fetch("https://euroscent-agent-web-app-server.onrender.com/api/products", { headers }), // ← your products route
+          fetch("https://euroscent-agent-web-app-server.onrender.com/api/get-all-orders", { headers }), // ← correct route
         ]);
 
         // TOKEN EXPIRED

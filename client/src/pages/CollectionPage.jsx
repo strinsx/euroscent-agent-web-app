@@ -18,7 +18,7 @@ const GENDERS = ["All", "Unisex", "Masculine", "Feminine"];
 const fetchData = async (setProducts) => {
   const token = localStorage.getItem("token");
   try {
-    const res = await fetch("http://localhost:3000/api/products", {
+    const res = await fetch("https://euroscent-agent-web-app-server.onrender.com/api/products", {
       method: "GET",
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),

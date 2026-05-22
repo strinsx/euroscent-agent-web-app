@@ -47,7 +47,7 @@ export default function SignUpPage() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         const response = await fetch(
-            'http://localhost:3000/api/auth/register',
+            'https://euroscent-agent-web-app-server.onrender.com/api/auth/register',
             {
                 method: 'POST',
                 headers: {

@@ -60,7 +60,7 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/orders", {
+      const res = await fetch("https://euroscent-agent-web-app-server.onrender.com/api/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

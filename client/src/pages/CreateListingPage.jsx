@@ -274,7 +274,7 @@ export default function CreateListingPage() {
             formData.append("images", img.file);
         });
 
-        const res = await fetch("http://localhost:3000/api/create-listing", {
+        const res = await fetch("https://euroscent-agent-web-app-server.onrender.com/api/create-listing", {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`,

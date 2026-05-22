@@ -11,7 +11,7 @@ export default function FeaturedProducts() {
     const fetchProducts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/api/products", {
+        const res = await fetch("https://euroscent-agent-web-app-server.onrender.com/api/products", {
           headers: {
             ...(token && { Authorization: `Bearer ${token}` }),
           },
